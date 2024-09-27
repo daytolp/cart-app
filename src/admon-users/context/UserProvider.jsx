@@ -2,7 +2,7 @@ import { UserContext } from "./userContext"
 import { useUsers } from '../hooks/useUsers'
 
 export const UserProvider = ({children}) => {
-    const { users, userSelected, initialForm, open, message, visibleForm, 
+    const { users, userSelected, initialForm, open, message, visibleForm, errors,
         handlerAddUser, handlerRemoveUser, handlerSelected, handleClose, handlerOpenForm, handleClosesForm, getUsers } = useUsers();
 
     return (
@@ -14,6 +14,7 @@ export const UserProvider = ({children}) => {
                 open,
                 message, 
                 visibleForm, 
+                errors,
                 handlerAddUser, 
                 handlerRemoveUser, 
                 handlerSelected, 

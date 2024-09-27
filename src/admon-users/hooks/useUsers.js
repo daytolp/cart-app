@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { usersReducer } from "../reducers/usersReducer";
 import { Constantes } from "../commons/Constants";
 import { getAll, removeUser, saveUser, updateUser } from "../services/userService";
+import { set } from "react-hook-form";
 
 const initialUsers = [
 ];
@@ -17,12 +18,20 @@ const initialMessages = {
     message: '',
     type: ''
 }
+
+const initialErrors = {
+  username: '',
+  password: '',
+  email: ''
+}
+
 export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialForm);
     const [open, setOpen] = useState(false);
     const [message, setMessage] = useState(initialMessages);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors, setErrors] = useState(initialErrors);
 
     const getUsers = async() => {
       const result = await getAll();
@@ -30,19 +39,25 @@ export const useUsers = () => {
     }
 
     const handlerAddUser = async(user) => {
-        const response = null;
+        let response = null;
         let type = Constantes.addUser;
-        setMessage({ message: Constantes.message001, type: Constantes.messageSuccess });
-        if (user.id !== 0) {
-            response = await updateUser(user);
-            type = Constantes.updateUser;
-            setMessage({ message: Constantes.message002, type: Constantes.messageSuccess });
-        } else {
-            response = await saveUser(user);
-        }
-        dispatch({ type, payload: response.data });
-        setOpen(true);
-        handleClosesForm();
+        try {
+          setMessage({ message: Constantes.message001, type: Constantes.messageSuccess });
+          if (user.id !== 0) {
+              response = await updateUser(user);
+              type = Constantes.updateUser;
+              setMessage({ message: Constantes.message002, type: Constantes.messageSuccess });
+          } else {
+              response = await saveUser(user);
+          }
+          dispatch({ type, payload: response.data });
+          setOpen(true);
+          handleClosesForm(); 
+        } catch (error) {
+          if (error.response && error.response.status === 400)
+            setErrors(error.response.data)
+          else throw error;
+        }        
       }
     
       const handlerRemoveUser = (id) => {
@@ -71,6 +86,7 @@ export const useUsers = () => {
       const handleClosesForm = () => {
         setVisibleForm(false);
         setUserSelected(initialForm);
+        setErrors({});
       }
 
     return  {
@@ -80,6 +96,7 @@ export const useUsers = () => {
         open,
         message,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerSelected,
