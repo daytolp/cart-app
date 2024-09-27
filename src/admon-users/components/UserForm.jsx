@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
 
 export const UserForm = ({ userSelected, handleClosesForm }) => {
-  const { handlerAddUser, initialForm, errors } = useContext(UserContext);
+  const { handlerAddUser, initialForm } = useContext(UserContext);
   const navigate = useNavigate();
   const [userForm, setUserform] = useState(initialForm);
   const { id, username, password, email } = userForm;
@@ -25,7 +25,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    // if (!username || (!password && id === 0) || !email) return;
+    if (!username || (!password && id === 0) || !email) return;
     
     handlerAddUser(userForm);
     setUserform(initialForm);
@@ -59,7 +59,6 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             },
           }}
           variant="standard"
-          helperText={errors?.username ? errors?.username : ''}
         />
         {id === 0 && (<TextField
           id="password"
@@ -79,7 +78,6 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             },
           }}
           variant="standard"
-          helperText={errors?.password ? errors?.password : ''}
         />)}
 
         <TextField
@@ -99,7 +97,6 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             },
           }}
           variant="standard"
-          helperText={errors?.email ? errors?.email : ''}
         />
       </Box>
       <Box sx={{ '& > :not(style)': { m: 3, width: '60ch' } }} align={'center'}>
