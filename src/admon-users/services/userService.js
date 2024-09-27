@@ -13,8 +13,7 @@ export const saveUser = async({username, email, password}) => {
    try {
     return await apiUrl.post('users', {username, email, password});
    } catch(error) {
-    console.log(error); 
-    return null;
+      throw error;
    }    
 }
 
@@ -22,8 +21,7 @@ export const updateUser = async({id, username, email}) => {
    try {
     return await apiUrl.put(`users/${id}`, {username, email});
    } catch(error) {
-    console.log(error); 
-    return null;
+    throw error;
    }    
 }
 
