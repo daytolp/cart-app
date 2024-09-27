@@ -87,7 +87,6 @@ export const useUsers = () => {
         setVisibleForm(false);
         setUserSelected(initialForm);
         setErrors({});
-        console.log("prueba")
       }
 
     return  {
