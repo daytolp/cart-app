@@ -1,4 +1,3 @@
-import axios from "axios"
 import apiUrl from "../../api/api";
 
 export const getAll = async() => {

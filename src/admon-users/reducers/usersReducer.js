@@ -1,8 +1,9 @@
 import { Constantes } from "../commons/Constants";
 
 export const usersReducer = (state = [], action) => {
+    console.log("action.type")
     switch (action.type) {
-
+       
         case Constantes.addUser:        
             return [
                 ...state,
