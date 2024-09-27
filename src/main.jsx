@@ -9,6 +9,8 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import CardApp from './CardApp';
 import { BrowserRouter } from 'react-router-dom';
+import { UserApp } from './UserApp';
+import { AuthProvider } from './admon-users/components/auth/context/AuthProvider';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -16,7 +18,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <CssBaseline/>
       {/* <InvoiceApp /> */}
-      <CardApp />
+      {/* <CardApp /> */}
+      <AuthProvider>
+        <UserApp/>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 )

@@ -20,7 +20,6 @@ export const Navbar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
-        console.log(event.currentTarget)
         setAnchorElNav(event.currentTarget);
     };
 

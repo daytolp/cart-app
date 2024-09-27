@@ -4,7 +4,7 @@ export const deleteProductCart = '[deleteProductCart]';
 
 export const MENU = [{
     item: 'HOME',
-    link: '/'
+    link: '/catalog'
 },
 {
     item: 'CATALOG',

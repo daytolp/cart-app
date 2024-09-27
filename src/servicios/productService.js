@@ -1,7 +1,9 @@
-import { products } from "../data/productos"
+import apiUrl from "../api/api";
 
-export const getProducts = () => {
-    return products;
+
+export const getProducts = async() => {
+    const products = await apiUrl.get('products');
+    return products.data;
 }
 
 export const calculateTotal = (items) => {
