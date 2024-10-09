@@ -4,6 +4,7 @@ import { UserModalForm } from '../components/UserModalForm';
 import Grid from '@mui/material/Grid2';
 import * as React from 'react';
 import { UserContext } from '../context/userContext';
+import { AuthContext } from '../components/auth/context/AuthContext';
 
 
 
@@ -15,6 +16,8 @@ export const UserPage = () => {
     getUsers();
   }, []);
   
+  const { login } = React.useContext(AuthContext);
+
   return (
     <>
         {/* Modal user */}
@@ -28,7 +31,7 @@ export const UserPage = () => {
            <Typography variant='h5'>Administración de usuarios</Typography>         
         </Box>  
         <Box sx={{ display: 'grid', gap: 1, gridTemplateColumns: 'repeat(1, 1fr)' }}> 
-          { !visibleForm && 
+          { (!visibleForm && login.isAdmin) && 
             <Box sx={{ flexGrow: 1, marginTop: 5 }}>
               <Grid container >
                 <Grid size={4}>

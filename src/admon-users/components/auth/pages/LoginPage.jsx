@@ -28,7 +28,6 @@ export const LoginPage = () => {
     //     reset();
     // });
     const onSubmit = ({username, password}) => {
-        console.log("onSubmit")
         handlerLogin({ username, password });
         // setValue('username', '')
         // setValue('password', '')

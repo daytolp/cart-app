@@ -7,10 +7,10 @@ export const MENU = [{
     link: '/catalog'
 },
 {
-    item: 'CATALOG',
+    item: 'CATALOGO',
     link: '/catalog'
 },
 {
-    item: 'CART',
+    item: 'CARRITO',
     link: '/cart'
 }];

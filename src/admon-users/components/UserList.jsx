@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { AddTask } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
+import { AuthContext } from './auth/context/AuthContext';
 
 
   const descendingComparator = (a, b, orderBy) => {
@@ -57,22 +58,24 @@ import { UserContext } from '../context/userContext';
   ];
 
   const EnhancedTableHead = (props) => {
-    const { order, orderBy, onRequestSort } = props;
+    const { order, orderBy, onRequestSort, isAdmin } = props;
     const createSortHandler = (property) => (event) => {
       onRequestSort(event, property);
     };
-  
+
     return (
       <TableHead>
         <TableRow>
           {headCells.map((headCell) => (
-            <TableCell
+            headCell.id === 'acciones' ?
+             isAdmin &&
+              <TableCell
               key={headCell.id}
               align={'center'}
               padding={headCell.disablePadding ? 'none' : 'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
-            { headCell.id === 'acciones' ? headCell.label : (
+            { headCell.id === 'acciones' ? headCell.label : ( 
               <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
@@ -80,8 +83,24 @@ import { UserContext } from '../context/userContext';
               >
               {headCell.label}
               </TableSortLabel>
-            )}
+            )} 
             </TableCell>
+            :  <TableCell
+                key={headCell.id}
+                align={'center'}
+                padding={headCell.disablePadding ? 'none' : 'normal'}
+                sortDirection={orderBy === headCell.id ? order : false}
+              >
+              { headCell.id === 'acciones' ? headCell.label : (
+                <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+                >
+                {headCell.label}
+                </TableSortLabel>
+              )}
+              </TableCell>
           ))}
         </TableRow>
       </TableHead>
@@ -113,6 +132,7 @@ import { UserContext } from '../context/userContext';
   
 export const UserList = () => {  
     const { users, handlerRemoveUser, handlerSelected } = useContext(UserContext);
+    const { login } = useContext(AuthContext);
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('acciones');
     const [page, setPage] = useState(0);
@@ -177,6 +197,7 @@ export const UserList = () => {
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
                 rowCount={users.length}
+                isAdmin={login.isAdmin}
               />
               <TableBody>
                 {visibleRows.map(({id, username, email}, index) => {
@@ -184,20 +205,22 @@ export const UserList = () => {
   
                   return (
                     <TableRow hover tabIndex={-1} key={id} sx={{ cursor: 'pointer' }}>
-                      <TableCell component="th" id={labelId} scope="row" padding="none"align={'center'}>
+                      <TableCell align={'center'}>
                         {id}
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none" align={'center'}>
+                      <TableCell align={'center'}>
                         {username}
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none" align={'center'}>
+                      <TableCell align={'center'}>
                         {email}
                       </TableCell>
-                      <TableCell align="center">
-                        <DeleteIcon onClick={() => onRemoveUser(id)} sx={{ color: '#C70039', borderRadius: 1, border: 2, marginRight: .5 }} />
-                        <EditIcon onClick={() => onSelectedUser({id, username, email})} sx={{ color: '#16a085', borderRadius: 1, border: 2, marginRight: .5 }} />
-                        <AddTask  onClick={() => onEditUser(id)} sx={{ color: '#b059b1', borderRadius: 1, border: 2 }} />
-                      </TableCell>
+                      { login.isAdmin && (
+                         <TableCell align="center">
+                         <DeleteIcon onClick={() => onRemoveUser(id)} sx={{ color: '#C70039', borderRadius: 1, border: 2, marginRight: .5 }} /> 
+                         <EditIcon onClick={() => onSelectedUser({id, username, email})} sx={{ color: '#16a085', borderRadius: 1, border: 2, marginRight: .5 }} /> 
+                         <AddTask  onClick={() => onEditUser(id)} sx={{ color: '#b059b1', borderRadius: 1, border: 2 }} />
+                       </TableCell>
+                      )} 
                     </TableRow>
                   );
                 })}

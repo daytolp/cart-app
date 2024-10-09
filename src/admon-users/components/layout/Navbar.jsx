@@ -17,7 +17,7 @@ import { MENU } from '../../../reducer/itemsActions';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../auth/context/AuthContext';
 
-const pages = ['USUARIOS', Constantes.optionRegisterMenu, 'HOME', 'CART', 'CATALOG'];
+const pages = ['USUARIOS', Constantes.optionRegisterMenu, 'HOME', 'CARRITO', 'CATALOGO'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 
@@ -35,7 +35,6 @@ export const Navbar = () => {
     };
   
     const handleCloseNavMenu = ({ target: { innerText } }) => {
-      console.log("option", innerText)
       switch (innerText) {
         case Constantes.optionUsersMenu:
           navigate('/users');
@@ -146,13 +145,22 @@ export const Navbar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             { login?.isAuth && pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
+               (page === Constantes.optionRegisterMenu) ?
+                  login.isAdmin && 
+                  <Button
+                    key={page}
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page} 
+                  </Button>
+              : <Button
+              key={page}
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              {page} 
+            </Button>
             ))}
           </Box>
           { login?.isAuth && 

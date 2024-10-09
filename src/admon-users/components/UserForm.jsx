@@ -23,12 +23,11 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
     setUserform({ ...userForm, [name]: value });
   }
 
-  const onSubmit = (event) => {
+  const onSubmit = async(event) => {
     event.preventDefault();
     // if (!username || (!password && id === 0) || !email) return;
     
-    handlerAddUser(userForm);
-    setUserform(initialForm);
+    await handlerAddUser(userForm);
     if (!handleClosesForm) navigate('/users');
   }
 
@@ -45,7 +44,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
         <TextField
           id="username"
           label="Username"
-          error
+          error={errors?.username ? true : false}
           name='username'
           value={username}
           onChange={onInputChange}
@@ -53,7 +52,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <AccountCircle color={true ? 'error' : ''} />
+                  <AccountCircle color={errors?.username ? 'error' : ''} />
                 </InputAdornment>
               ),
             },
@@ -64,7 +63,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
         {id === 0 && (<TextField
           id="password"
           label="Password"
-          error
+          error={errors?.password ? true : false}
           name='password'
           type='password'
           value={password}
@@ -73,7 +72,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <Password color={true ? 'error' : ''} />
+                  <Password color={errors?.password ? 'error' : ''} />
                 </InputAdornment>
               ),
             },
@@ -85,7 +84,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
         <TextField
           id="email"
           label="Email"
-          error
+          error={errors?.email ? true : false}
           name='email'
           value={email}
           onChange={onInputChange}
@@ -93,7 +92,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <Email color={true ? 'error' : ''} />
+                  <Email color={errors?.email ? 'error' : ''} />
                 </InputAdornment>
               ),
             },

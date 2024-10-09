@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const initialLogin = JSON.parse(sessionStorage.getItem('login')) || {
     isAuth: false,
+    isAdmin: false,
     user: undefined
   }
   
@@ -28,24 +29,32 @@ export const useAuth = () => {
       }
     }
   
-    const handlerLogin = ({ username, password }) => {   
-      
-      const isLogin = loginUser({username, password});
+    const handlerLogin = async({ username, password }) => {        
+      try {
+        const response = await loginUser({username, password});
+        const token = response.data.token;
+        const claims = decodeToken(token);
+        const user = { username: response.data.username};
 
-      if (isLogin) {
-        const user = { username: 'admin'};
         dispatch({
           type: Constantes.login,
-          payload: user
+          payload: {user, isAdmin: claims.isAdmin}
         });
         sessionStorage.setItem('login', JSON.stringify({
           isAuth: true,
+          isAdmin: claims.isAdmin,
           user
         }));
+
+        sessionStorage.setItem('token', `Bearer ${token}`);
         navigate('/users');
-      } else {
-        setOpen(true);
-        setMessages({ message: Constantes.message005, type: Constantes.messageError });
+      } catch (error) {
+        if (error.response?.status == 401)
+          setMessages({ message: Constantes.message005, type: Constantes.messageError });
+        else if (error.response?.status == 403)
+          setMessages({ message: Constantes.message006, type: Constantes.messageError });
+        else throw error;
+        setOpen(true);        
       }
     }
   
@@ -53,12 +62,17 @@ export const useAuth = () => {
       dispatch({
         type: '[logout]'
       });
-      sessionStorage.removeItem('login');
+      sessionStorage.clear();
     }
     
     const handleClose = (_, reason) => {
       if (reason === 'clickaway') return;    
       setOpen(false);
+    }
+
+    const decodeToken = (token) => {
+      return JSON.parse(window.atob(token.split(".")[1]));
+
     }
 
     return {

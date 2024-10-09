@@ -1,8 +1,9 @@
-import { useReducer, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import { usersReducer } from "../reducers/usersReducer";
 import { Constantes } from "../commons/Constants";
 import { getAll, removeUser, saveUser, updateUser } from "../services/userService";
 import { set } from "react-hook-form";
+import { AuthContext } from "../components/auth/context/AuthContext";
 
 const initialUsers = [
 ];
@@ -26,6 +27,7 @@ const initialErrors = {
 }
 
 export const useUsers = () => {
+  const { login } = useContext(AuthContext);
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialForm);
     const [open, setOpen] = useState(false);
@@ -39,6 +41,7 @@ export const useUsers = () => {
     }
 
     const handlerAddUser = async(user) => {
+        if (!login.isAdmin) return;
         let response = null;
         let type = Constantes.addUser;
         try {
@@ -55,12 +58,18 @@ export const useUsers = () => {
           handleClosesForm(); 
         } catch (error) {
           if (error.response && error.response.status === 400)
-            setErrors(error.response.data)
+            setErrors(error.response.data);
+          else if (error.response && error.response.status === 500 && error.response.data.includes('UK_email')) {
+            setErrors({email: 'El email ya existe'});
+          } else if (error.response && error.response.status === 500 && error.response.data.includes('UK_username'))
+            setErrors({username: 'El username ya existe'});
           else throw error;
-        }        
+        }   
+        
       }
     
       const handlerRemoveUser = (id) => {
+        if (!login.isAdmin) return;
         removeUser(id);
         dispatch({ type: Constantes.removeUser, payload: id });
         setMessage({ message: Constantes.message003, type: Constantes.messageWarning });

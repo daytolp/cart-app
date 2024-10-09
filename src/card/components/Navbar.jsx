@@ -24,7 +24,6 @@ export const Navbar = () => {
     };
 
     const handleCloseNavMenu = ({ target: { innerText } }) => {
-        console.log("option", innerText)
         switch (innerText) {
             case MENU[1].item://catalog
                 navigate(MENU[1].link);

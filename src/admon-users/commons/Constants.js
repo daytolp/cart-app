@@ -8,6 +8,7 @@ export const Constantes = {
     message003: 'Registro eliminado',
     message004: 'Username y password requeridos',
     message005: 'Username o password invalidos',
+    message006: 'No tiene acceso al recurso o permisos',
     messageSuccess: 'success',
     messageWarning: 'warning',
     messageError: 'error',
