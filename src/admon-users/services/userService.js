@@ -1,13 +1,5 @@
 import apiUrl from "../../api/api";
 
-const config = () => {
-   return {
-      headers: {
-         "Authorization": sessionStorage.getItem('token'),
-         "Content-Type": "application/json",
-      }
-   }
-}
 export const getAll = async() => {
    try {
     return await apiUrl.get('users');
@@ -16,17 +8,17 @@ export const getAll = async() => {
    }    
 }
 
-export const saveUser = async({username, email, password}) => {
+export const saveUser = async({username, email, password, admin}) => {
    try {
-    return await apiUrl.post('users', {username, email, password}, config());
+    return await apiUrl.post('users', {username, email, password, admin});
    } catch(error) {
       throw error;
    }    
 }
 
-export const updateUser = async({id, username, email}) => {
+export const updateUser = async({id, username, email, admin}) => {
    try {
-    return await apiUrl.put(`users/${id}`, {username, email}, config());
+    return await apiUrl.put(`users/${id}`, {username, email, admin});
    } catch(error) {
     throw error;
    }    
@@ -34,9 +26,8 @@ export const updateUser = async({id, username, email}) => {
 
 export const removeUser = async(id) => {
    try {
-    return await apiUrl.delete(`users/${id}`, config());
+    return await apiUrl.delete(`users/${id}`);
    } catch(error) {
-    console.log(error); 
-    return null;
+      throw error;
    }    
 }

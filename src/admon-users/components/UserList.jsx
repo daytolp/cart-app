@@ -130,7 +130,7 @@ import { AuthContext } from './auth/context/AuthContext';
     );
   }
   
-export const UserList = () => {  
+export const UserList = ({admin}) => {  
     const { users, handlerRemoveUser, handlerSelected } = useContext(UserContext);
     const { login } = useContext(AuthContext);
     const [order, setOrder] = useState('asc');
@@ -200,7 +200,7 @@ export const UserList = () => {
                 isAdmin={login.isAdmin}
               />
               <TableBody>
-                {visibleRows.map(({id, username, email}, index) => {
+                {visibleRows.map(({id, username, email, admin}, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
   
                   return (
@@ -217,7 +217,7 @@ export const UserList = () => {
                       { login.isAdmin && (
                          <TableCell align="center">
                          <DeleteIcon onClick={() => onRemoveUser(id)} sx={{ color: '#C70039', borderRadius: 1, border: 2, marginRight: .5 }} /> 
-                         <EditIcon onClick={() => onSelectedUser({id, username, email})} sx={{ color: '#16a085', borderRadius: 1, border: 2, marginRight: .5 }} /> 
+                         <EditIcon onClick={() => onSelectedUser({id, username, email, admin})} sx={{ color: '#16a085', borderRadius: 1, border: 2, marginRight: .5 }} /> 
                          <AddTask  onClick={() => onEditUser(id)} sx={{ color: '#b059b1', borderRadius: 1, border: 2 }} />
                        </TableCell>
                       )} 

@@ -12,7 +12,8 @@ const initialForm = {
   id: 0,
   username: '',
   password: '',
-  email: ''
+  email: '',
+  admin:false
 } 
 
 const initialMessages = {
@@ -27,7 +28,7 @@ const initialErrors = {
 }
 
 export const useUsers = () => {
-  const { login } = useContext(AuthContext);
+    const { login, handlerLogout } = useContext(AuthContext);
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialForm);
     const [open, setOpen] = useState(false);
@@ -36,8 +37,13 @@ export const useUsers = () => {
     const [errors, setErrors] = useState(initialErrors);
 
     const getUsers = async() => {
-      const result = await getAll();
-      dispatch({type: Constantes.loadingUsers, payload: result.data})
+      try {
+        const result = await getAll();
+        dispatch({type: Constantes.loadingUsers, payload: result.data})
+      } catch (error) {
+        if (error.response?.status === 401)
+          handlerLogout();
+      }
     }
 
     const handlerAddUser = async(user) => {
@@ -57,23 +63,30 @@ export const useUsers = () => {
           setOpen(true);
           handleClosesForm(); 
         } catch (error) {
-          if (error.response && error.response.status === 400)
+          if (error.response?.status === 400)
             setErrors(error.response.data);
-          else if (error.response && error.response.status === 500 && error.response.data.includes('UK_email')) {
+          else if (error.response?.status === 500 && error.response.data.includes('UK_email')) {
             setErrors({email: 'El email ya existe'});
-          } else if (error.response && error.response.status === 500 && error.response.data.includes('UK_username'))
+          } else if (error.response?.status === 500 && error.response.data.includes('UK_username'))
             setErrors({username: 'El username ya existe'});
+          else if (error.response?.status == 401)
+            handlerLogout();
           else throw error;
         }   
         
       }
     
-      const handlerRemoveUser = (id) => {
+      const handlerRemoveUser = async(id) => {
         if (!login.isAdmin) return;
-        removeUser(id);
-        dispatch({ type: Constantes.removeUser, payload: id });
-        setMessage({ message: Constantes.message003, type: Constantes.messageWarning });
-        setOpen(true);
+        try {
+          await removeUser(id);
+          dispatch({ type: Constantes.removeUser, payload: id });
+          setMessage({ message: Constantes.message003, type: Constantes.messageWarning });
+          setOpen(true);
+        } catch (error) {
+          if (error.response?.status == 401)
+            handlerLogout();
+        }     
       }
     
       const handlerSelected = (user) => {

@@ -4,7 +4,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { Email, Password } from '@mui/icons-material';
-import { Button } from '@mui/material';
+import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
@@ -13,7 +13,8 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
   const { handlerAddUser, initialForm, errors } = useContext(UserContext);
   const navigate = useNavigate();
   const [userForm, setUserform] = useState(initialForm);
-  const { id, username, password, email } = userForm;
+  const { id, username, password, email, admin } = userForm;  
+  const [checked, setChecked] = useState(admin);
 
   useEffect(() => {
     setUserform({ ...userSelected })
@@ -36,6 +37,10 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
     setUserform(initialForm);
   }
 
+  const onCheckChange = () => {
+    setChecked(!checked);
+    setUserform({ ...userForm, admin: checked });
+  }
   return (
     <>
       <Box sx={{ '& > :not(style)': { m: 3, width: '60ch' } }} align={'center'} component="form"
@@ -100,6 +105,7 @@ export const UserForm = ({ userSelected, handleClosesForm }) => {
           variant="standard"
           helperText={errors?.email ? errors?.email : ''}
         />
+        <FormControlLabel control={<Checkbox checked={admin}  onChange={onCheckChange} />} label="Admin" />
       </Box>
       <Box sx={{ '& > :not(style)': { m: 3, width: '60ch' } }} align={'center'}>
         <Box sx={{ flexGrow: 1, marginTop: 5 }} align={'left'}>
