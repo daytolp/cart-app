@@ -1,15 +1,15 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material'
-import React, { useContext } from 'react'
+import React from 'react'
 import { UserForm } from './UserForm'
 import Slide from '@mui/material/Slide';
-import { UserContext } from '../context/userContext';
+import { useUsers } from '../hooks/useUsers';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
   
 export const UserModalForm = () => {
-  const { userSelected, handleClosesForm, visibleForm} = useContext(UserContext);
+  const { userSelected, handleClosesForm, visibleForm} = useUsers();
   return (
     <>
         <Dialog

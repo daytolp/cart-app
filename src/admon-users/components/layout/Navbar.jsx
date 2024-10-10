@@ -15,14 +15,14 @@ import { LocalGroceryStore } from '@mui/icons-material';
 import { Constantes } from '../../commons/Constants';
 import { MENU } from '../../../reducer/itemsActions';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../auth/context/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 
 const pages = ['USUARIOS', Constantes.optionRegisterMenu, 'HOME', 'CARRITO', 'CATALOGO'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 
 export const Navbar = () => {
-    const { login, handlerLogout } = useContext(AuthContext);
+    const { login, handlerLogout } = useAuth();
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const navigate = useNavigate();

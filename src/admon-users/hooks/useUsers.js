@@ -1,45 +1,24 @@
-import { useContext, useReducer, useState } from "react";
-import { usersReducer } from "../reducers/usersReducer";
-import { Constantes } from "../commons/Constants";
+
 import { getAll, removeUser, saveUser, updateUser } from "../services/userService";
-import { set } from "react-hook-form";
-import { AuthContext } from "../components/auth/context/AuthContext";
-
-const initialUsers = [
-];
-
-const initialForm = {
-  id: 0,
-  username: '',
-  password: '',
-  email: '',
-  admin:false
-} 
-
-const initialMessages = {
-    message: '',
-    type: ''
-}
-
-const initialErrors = {
-  username: '',
-  password: '',
-  email: ''
-}
+import { useDispatch, useSelector } from "react-redux";
+import { initialForm, addUser, onRemoveUser, onUpdateUser, loadingUsers, onSelected, onOpenForm, onClosesForm, onError, onOpenAlert } from "../../store/slices/users/UserSlice";
+import { useAuth } from "./useAuth";
 
 export const useUsers = () => {
-    const { login, handlerLogout } = useContext(AuthContext);
-    const [users, dispatch] = useReducer(usersReducer, initialUsers);
-    const [userSelected, setUserSelected] = useState(initialForm);
-    const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState(initialMessages);
-    const [visibleForm, setVisibleForm] = useState(false);
-    const [errors, setErrors] = useState(initialErrors);
+    const { login, handlerLogout } = useAuth();
+    // const [users, dispatch] = useReducer(usersReducer, initialUsers);
+    // const [userSelected, setUserSelected] = useState(initialForm);
+    // const [visibleForm, setVisibleForm] = useState(false);
+    const {users, userSelected, visibleForm, message, errors, open} = useSelector(state => state.users);
+    const dispatch = useDispatch();
+    // const [open, setOpen] = useState(false);
+    // const [message, setMessage] = useState(initialMessages);
+    // const [errors, setErrors] = useState(initialErrors);
 
     const getUsers = async() => {
       try {
         const result = await getAll();
-        dispatch({type: Constantes.loadingUsers, payload: result.data})
+        dispatch(loadingUsers(result.data));
       } catch (error) {
         if (error.response?.status === 401)
           handlerLogout();
@@ -49,26 +28,28 @@ export const useUsers = () => {
     const handlerAddUser = async(user) => {
         if (!login.isAdmin) return;
         let response = null;
-        let type = Constantes.addUser;
+        // let type = Constantes.addUser;
         try {
-          setMessage({ message: Constantes.message001, type: Constantes.messageSuccess });
+          // setMessage({ message: Constantes.message001, type: Constantes.messageSuccess });
           if (user.id !== 0) {
               response = await updateUser(user);
-              type = Constantes.updateUser;
-              setMessage({ message: Constantes.message002, type: Constantes.messageSuccess });
+              // type = Constantes.updateUser;
+              // setMessage({ message: Constantes.message002, type: Constantes.messageSuccess });
+              dispatch(onUpdateUser(response.data));
           } else {
               response = await saveUser(user);
+              dispatch(addUser(response.data));
           }
-          dispatch({ type, payload: response.data });
-          setOpen(true);
+
+          // setOpen(true);
           handleClosesForm(); 
         } catch (error) {
           if (error.response?.status === 400)
-            setErrors(error.response.data);
+            dispatch(onError(error.response.data));
           else if (error.response?.status === 500 && error.response.data.includes('UK_email')) {
-            setErrors({email: 'El email ya existe'});
+            dispatch(onError({email: 'El email ya existe'}));
           } else if (error.response?.status === 500 && error.response.data.includes('UK_username'))
-            setErrors({username: 'El username ya existe'});
+            dispatch(onError({username: 'El username ya existe'}));
           else if (error.response?.status == 401)
             handlerLogout();
           else throw error;
@@ -80,9 +61,9 @@ export const useUsers = () => {
         if (!login.isAdmin) return;
         try {
           await removeUser(id);
-          dispatch({ type: Constantes.removeUser, payload: id });
-          setMessage({ message: Constantes.message003, type: Constantes.messageWarning });
-          setOpen(true);
+          dispatch(onRemoveUser(id));
+          // setMessage({ message: Constantes.message003, type: Constantes.messageWarning });
+          // setOpen(true);
         } catch (error) {
           if (error.response?.status == 401)
             handlerLogout();
@@ -90,25 +71,28 @@ export const useUsers = () => {
       }
     
       const handlerSelected = (user) => {
-        setVisibleForm(true);
-        setUserSelected({...user});
-        setMessage(initialMessages);
-        setOpen(false);
+        // setVisibleForm(true);
+        // setUserSelected({...user});
+        // setMessage(initialMessages);
+        // setOpen(false);
+        dispatch(onSelected({...user}))
       }
 
       const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;    
-        setOpen(false);
+        // setOpen(false);
+        dispatch(onOpenAlert());
       };
 
       const handlerOpenForm = () => {
-        setVisibleForm(true);
+        dispatch(onOpenForm());
       }
 
       const handleClosesForm = () => {
-        setVisibleForm(false);
-        setUserSelected(initialForm);
-        setErrors({});
+        // setVisibleForm(false);
+        // setUserSelected(initialForm);
+        // setErrors({});
+        dispatch(onClosesForm());
       }
 
     return  {

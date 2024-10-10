@@ -1,30 +1,25 @@
-import { useReducer, useState } from "react";
-import { loginReducer } from "../reducers/loginReducer";
+import { useState } from "react";
 import { loginUser } from "../services/authService";
 import { Constantes } from "../commons/Constants";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { onCloseAlertLogin, onLogin, onLogout, onMessageLogin } from "../../store/slices/auth/AuthSlice";
 
-const initialLogin = JSON.parse(sessionStorage.getItem('login')) || {
-    isAuth: false,
-    isAdmin: false,
-    user: undefined
-  }
   
-  const initialMessages = {
-    message: '',
-    type: ''
-  }
-
+// const initialMessages = {
+//   message: '',
+//   type: ''
+// }
 export const useAuth = () => {
-    const [open, setOpen] = useState(false);
-    const [messages, setMessages] = useState(initialMessages);
-    const [login, dispatch] = useReducer(loginReducer, initialLogin);
+    // const [open, setOpen] = useState(false);
+    // const [messages, setMessages] = useState(initialMessages);
+    const dispatch = useDispatch();
+    const { user, isAdmin, isAuth, messages, open } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
     const handleErrorLogin = (errors) => {
       if (errors.username?.type == 'required' || errors.password?.type == 'required') {
-        setMessages({ message: Constantes.message004, type: Constantes.messageError });
-        setOpen(true);
+        dispatch(onMessageLogin({ message: Constantes.message004, type: Constantes.messageError }));
         return;
       }
     }
@@ -36,10 +31,8 @@ export const useAuth = () => {
         const claims = decodeToken(token);
         const user = { username: response.data.username};
 
-        dispatch({
-          type: Constantes.login,
-          payload: {user, isAdmin: claims.isAdmin}
-        });
+        dispatch(onLogin({user, isAdmin: claims.isAdmin}));
+
         sessionStorage.setItem('login', JSON.stringify({
           isAuth: true,
           isAdmin: claims.isAdmin,
@@ -50,35 +43,31 @@ export const useAuth = () => {
         navigate('/users');
       } catch (error) {
         if (error.response?.status == 401)
-          setMessages({ message: Constantes.message005, type: Constantes.messageError });
+          dispatch(onMessageLogin({ message: Constantes.message005, type: Constantes.messageError }));
         else if (error.response?.status == 403)
-          setMessages({ message: Constantes.message006, type: Constantes.messageError });
-        else throw error;
-        setOpen(true);        
+          dispatch(onMessageLogin({ message: Constantes.message006, type: Constantes.messageError }));
+        else throw error;       
       }
     }
   
     const handlerLogout = () => {
-      dispatch({
-        type: '[logout]'
-      });
+      dispatch(onLogout());
       sessionStorage.clear();
     }
     
     const handleClose = (_, reason) => {
       if (reason === 'clickaway') return;    
-      setOpen(false);
+      dispatch(onCloseAlertLogin())
     }
 
     const decodeToken = (token) => {
       return JSON.parse(window.atob(token.split(".")[1]));
-
     }
 
     return {
         open,
         messages,
-        login,
+        login: { user, isAdmin, isAuth },
         handlerLogin,
         handlerLogout,
         handleClose,

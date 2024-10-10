@@ -8,9 +8,10 @@ import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/userContext';
+import { useUsers } from '../hooks/useUsers';
 
 export const UserForm = ({ userSelected, handleClosesForm }) => {
-  const { handlerAddUser, initialForm, errors } = useContext(UserContext);
+  const { handlerAddUser, initialForm, errors } = useUsers();
   const navigate = useNavigate();
   const [userForm, setUserform] = useState(initialForm);
   const { id, username, password, email, admin } = userForm;  

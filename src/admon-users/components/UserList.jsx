@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -18,8 +18,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { AddTask } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../context/userContext';
-import { AuthContext } from './auth/context/AuthContext';
+import { useUsers } from '../hooks/useUsers';
+import { useAuth } from '../hooks/useAuth';
 
 
   const descendingComparator = (a, b, orderBy) => {
@@ -131,8 +131,8 @@ import { AuthContext } from './auth/context/AuthContext';
   }
   
 export const UserList = ({admin}) => {  
-    const { users, handlerRemoveUser, handlerSelected } = useContext(UserContext);
-    const { login } = useContext(AuthContext);
+    const { users, handlerRemoveUser, handlerSelected } = useUsers();
+    const { login } = useAuth();
     const [order, setOrder] = useState('asc');
     const [orderBy, setOrderBy] = useState('acciones');
     const [page, setPage] = useState(0);

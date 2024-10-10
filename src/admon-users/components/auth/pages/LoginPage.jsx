@@ -10,7 +10,7 @@ import { Controller, useForm } from 'react-hook-form';
 
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../../../hooks/useAuth';
 
 const initialForm = {
     username: '',
@@ -18,7 +18,7 @@ const initialForm = {
   } 
   
 export const LoginPage = () => { 
-    const { handlerLogin, handleErrorLogin } = useContext(AuthContext);
+    const { handlerLogin, handleErrorLogin } = useAuth();
     const { control, watch, setValue, reset, register, handleSubmit, formState: { errors } } = useForm();
 
     // const onSubmit = handleSubmit(({username, password}) => {

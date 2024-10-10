@@ -3,20 +3,20 @@ import { UserList } from '../components/UserList';
 import { UserModalForm } from '../components/UserModalForm';
 import Grid from '@mui/material/Grid2';
 import * as React from 'react';
-import { UserContext } from '../context/userContext';
-import { AuthContext } from '../components/auth/context/AuthContext';
+import { useUsers } from '../hooks/useUsers';
+import { useAuth } from '../hooks/useAuth';
 
 
 
 export const UserPage = () => {
   const { users, open, message, visibleForm, 
-          getUsers, handleClose, handlerOpenForm } = React.useContext(UserContext);
+          getUsers, handleClose, handlerOpenForm } = useUsers();
   
   React.useEffect(() => {
     getUsers();
   }, []);
   
-  const { login } = React.useContext(AuthContext);
+  const { login } = useAuth();
 
   return (
     <>
